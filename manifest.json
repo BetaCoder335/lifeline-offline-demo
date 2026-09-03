@@ -1,0 +1,10 @@
+{
+  "name": "LIFELINE Offline Emergency Assessment",
+  "short_name": "LIFELINE",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eef3f8",
+  "theme_color": "#101827",
+  "description": "Offline emergency assessment demo",
+  "icons": []
+}
