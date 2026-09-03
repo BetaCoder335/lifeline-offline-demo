@@ -1,201 +1,27 @@
 const PROTOCOLS = {
-  unconsciousness: {
-    name: "Unconsciousness",
-    questions: [
-      "When you call out loudly and tap the person's shoulder, is there any response?",
-      "Is the person breathing normally?",
-      "If they are breathing, are they continuing to breathe without obvious difficulty?"
-    ],
-    evaluate(a) {
-      if (a[0] === "no" && a[1] === "no") return red("The person is unresponsive and not breathing normally.", "Call your local emergency number immediately and follow the emergency operator's instructions. If trained, begin CPR and use an AED if available.");
-      if (a[0] === "no" && a[1] === "yes") return red("The person is unresponsive.", "Call your local emergency number immediately. Keep monitoring breathing and follow the emergency operator's instructions.");
-      return green("No emergency rule was triggered by the answers provided.", "Continue monitoring the person. If their condition changes or they become unresponsive, seek emergency help immediately.");
-    }
-  },
-  chest_pain: {
-    name: "Chest Pain",
-    questions: [
-      "Is the chest pain severe, sudden, or getting worse?",
-      "Is there difficulty breathing, fainting, or severe weakness?",
-      "Does the pain spread to the arm, shoulder, back, neck, or jaw?"
-    ],
-    evaluate(a) {
-      if (a[0] === "yes" || a[1] === "yes" || a[2] === "yes") return red("Warning signs were reported with chest pain.", "Seek emergency medical care immediately. Do not delay care while using this application.");
-      return yellow("No defined emergency rule was triggered, but chest pain still deserves attention.", "Arrange medical evaluation, particularly if the pain persists, returns, or you develop new symptoms.");
-    }
-  },
-  pregnancy: {
-    name: "Pregnancy",
-    questions: [
-      "Is there vaginal bleeding?",
-      "Is the abdominal pain severe or getting worse?",
-      "Is there fainting, severe weakness, or difficulty breathing?"
-    ],
-    evaluate(a) {
-      if (a[0] === "yes" && a[1] === "yes") return red("Pregnancy with bleeding and severe or worsening abdominal pain needs urgent assessment.", "Seek emergency medical care immediately.");
-      if (a[1] === "yes" || a[2] === "yes") return yellow("A warning symptom was reported during pregnancy.", "Contact a healthcare professional promptly, or seek urgent care if symptoms are severe or worsening.");
-      return yellow("No defined emergency rule was triggered by these answers.", "Continue monitoring and contact a healthcare professional if symptoms persist, worsen, or new warning signs appear.");
-    }
-  },
-  menstrual: {
-    name: "Menstrual Health",
-    questions: [
-      "Is the bleeding unusually heavy?",
-      "Are you feeling faint, very weak, or short of breath?",
-      "Is the pain severe or getting worse?"
-    ],
-    evaluate(a) {
-      if (a[0] === "yes" && a[1] === "yes") return red("Heavy bleeding with significant weakness or faintness is a warning sign.", "Seek emergency medical care immediately.");
-      if (a[0] === "yes" || a[1] === "yes" || a[2] === "yes") return yellow("A warning symptom was reported.", "Consider prompt medical evaluation, especially if symptoms persist or worsen.");
-      return green("No defined emergency rule was triggered.", "Continue monitoring your symptoms and seek medical help if they worsen or new warning signs appear.");
-    }
-  },
-  bleeding: {
-    name: "Bleeding",
-    questions: [
-      "Is the bleeding heavy or difficult to control?",
-      "Is the person faint, confused, extremely weak, or having difficulty breathing?",
-      "Has the bleeding continued despite applying firm pressure?"
-    ],
-    evaluate(a) {
-      if (a[0] === "yes" || a[1] === "yes" || a[2] === "yes") return red("The answers indicate potentially serious bleeding.", "Seek emergency medical care immediately. Apply firm direct pressure to external bleeding while waiting for help.");
-      return green("No defined emergency rule was triggered.", "Continue monitoring and seek medical help if bleeding increases, persists, or new warning signs appear.");
-    }
-  }
+  unconsciousness: {name:"Unconsciousness",questions:["When you call out loudly and tap the person's shoulder, is there any response?","Is the person breathing normally?","If they are breathing, are they continuing to breathe without obvious difficulty?"],evaluate(a){if(a[0]==="no"&&a[1]==="no")return red("The person is unresponsive and not breathing normally.","Call your local emergency number immediately and follow the emergency operator's instructions. If trained, begin CPR and use an AED if available.");if(a[0]==="no")return red("The person is unresponsive.","Call your local emergency number immediately. Keep monitoring breathing and follow the emergency operator's instructions.");return green("No emergency rule was triggered by the answers provided.","Continue monitoring the person. If their condition changes or they become unresponsive, seek emergency help immediately.");}},
+  chest_pain: {name:"Chest Pain",questions:["Is the chest pain severe, sudden, or getting worse?","Is there difficulty breathing, fainting, or severe weakness?","Does the pain spread to the arm, shoulder, back, neck, or jaw?"],evaluate(a){if(a[0]==="yes"||a[1]==="yes"||a[2]==="yes")return red("Warning signs were reported with chest pain.","Seek emergency medical care immediately. Do not delay care while using this application.");return yellow("No defined emergency rule was triggered, but chest pain still deserves attention.","Arrange medical evaluation, particularly if the pain persists, returns, or you develop new symptoms.");}},
+  pregnancy: {name:"Pregnancy",questions:["Is there vaginal bleeding?","Is the abdominal pain severe or getting worse?","Is there fainting, severe weakness, or difficulty breathing?"],evaluate(a){if(a[0]==="yes"&&a[1]==="yes")return red("Pregnancy with bleeding and severe or worsening abdominal pain needs urgent assessment.","Seek emergency medical care immediately.");if(a[1]==="yes"||a[2]==="yes")return yellow("A warning symptom was reported during pregnancy.","Contact a healthcare professional promptly, or seek urgent care if symptoms are severe or worsening.");return yellow("No defined emergency rule was triggered by these answers.","Continue monitoring and contact a healthcare professional if symptoms persist, worsen, or new warning signs appear.");}},
+  menstrual: {name:"Menstrual Health",questions:["Is the bleeding unusually heavy?","Are you feeling faint, very weak, or short of breath?","Is the pain severe or getting worse?"],evaluate(a){if(a[0]==="yes"&&a[1]==="yes")return red("Heavy bleeding with significant weakness or faintness is a warning sign.","Seek emergency medical care immediately.");if(a[0]==="yes"||a[1]==="yes"||a[2]==="yes")return yellow("A warning symptom was reported.","Consider prompt medical evaluation, especially if symptoms persist or worsen.");return green("No defined emergency rule was triggered.","Continue monitoring your symptoms and seek medical help if they worsen or new warning signs appear.");}},
+  bleeding: {name:"Bleeding",questions:["Is the bleeding heavy or difficult to control?","Is the person faint, confused, extremely weak, or having difficulty breathing?","Has the bleeding continued despite applying firm pressure?"],evaluate(a){if(a[0]==="yes"||a[1]==="yes"||a[2]==="yes")return red("The answers indicate potentially serious bleeding.","Seek emergency medical care immediately. Apply firm direct pressure to external bleeding while waiting for help.");return green("No defined emergency rule was triggered.","Continue monitoring and seek medical help if bleeding increases, persists, or new warning signs appear.");}}
 };
-
-function red(message, action) { return { risk: "RED", title: "Seek Immediate Medical Attention", message, action }; }
-function yellow(message, action) { return { risk: "YELLOW", title: "Medical Evaluation Recommended", message, action }; }
-function green(message, action) { return { risk: "GREEN", title: "No Immediate Emergency Signs Detected", message, action }; }
-
-const categoryLabels = {
-  chest_pain: "Chest Pain",
-  pregnancy: "Pregnancy",
-  menstrual: "Menstrual Health",
-  bleeding: "Bleeding",
-  unconsciousness: "Unconsciousness"
-};
-
-let currentProtocol = null;
-let currentIndex = 0;
-let answers = [];
-
-const $ = (id) => document.getElementById(id);
-const startScreen = $("startScreen");
-const questionScreen = $("questionScreen");
-const resultScreen = $("resultScreen");
-const description = $("description");
-const error = $("error");
-const categoryPicker = $("categoryPicker");
-const categoryButtons = $("categoryButtons");
-
-function show(el) { el.classList.remove("hidden"); }
-function hide(el) { el.classList.add("hidden"); }
-
-function classify(text) {
-  const t = text.toLowerCase();
-  if (/unconscious|unresponsive|not responding|passed out|collapsed|not awake|fainted/.test(t)) return "unconsciousness";
-  if (/pregnan|pregnancy|pregnant/.test(t)) return "pregnancy";
-  if (/chest pain|pain in (my|the) chest|chest pressure/.test(t)) return "chest_pain";
-  if (/period|menstrual|menstruation|cramps/.test(t)) return "menstrual";
-  if (/bleed|bleeding|blood loss|heavy blood/.test(t)) return "bleeding";
-  return null;
-}
-
-function startProtocol(key) {
-  currentProtocol = PROTOCOLS[key];
-  if (!currentProtocol) return;
-  currentIndex = 0;
-  answers = [];
-  hide(startScreen);
-  hide(resultScreen);
-  show(questionScreen);
-  renderQuestion();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function renderQuestion() {
-  const q = currentProtocol.questions[currentIndex];
-  $("protocolName").textContent = currentProtocol.name;
-  $("questionCounter").textContent = `Question ${currentIndex + 1} of ${currentProtocol.questions.length}`;
-  $("questionText").textContent = q;
-}
-
-function answer(value) {
-  answers[currentIndex] = value;
-  currentIndex += 1;
-  if (currentIndex < currentProtocol.questions.length) {
-    renderQuestion();
-  } else {
-    showResult(currentProtocol.evaluate(answers));
-  }
-}
-
-function showResult(result) {
-  hide(questionScreen);
-  show(resultScreen);
-  const badge = $("riskBadge");
-  badge.textContent = result.risk;
-  badge.className = `risk-badge risk-${result.risk.toLowerCase()}`;
-  $("resultTitle").textContent = result.title;
-  $("resultMessage").textContent = result.message;
-  $("resultBox").innerHTML = `<strong>What to do next</strong><div>${escapeHtml(result.action)}</div><p class="disclaimer">This is a demonstration decision-support interface, not a diagnosis or a substitute for professional medical care.</p>`;
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function escapeHtml(value) {
-  return value.replace(/[&<>'"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
-}
-
-function showCategoryPicker() {
-  categoryButtons.innerHTML = "";
-  Object.entries(categoryLabels).forEach(([key, label]) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "category-btn";
-    button.textContent = label;
-    button.addEventListener("click", () => startProtocol(key));
-    categoryButtons.appendChild(button);
-  });
-  show(categoryPicker);
-  error.textContent = "";
-  hide(error);
-}
-
-$("startButton").addEventListener("click", () => {
-  const text = description.value.trim();
-  if (!text) {
-    error.textContent = "Please describe the main problem first.";
-    show(error);
-    return;
-  }
-  const category = classify(text);
-  if (category) {
-    hide(categoryPicker);
-    hide(error);
-    startProtocol(category);
-  } else {
-    showCategoryPicker();
-  }
-});
-
-document.querySelectorAll(".answer").forEach((button) => {
-  button.addEventListener("click", () => answer(button.dataset.answer));
-});
-
-$("restartButton").addEventListener("click", () => {
-  currentProtocol = null;
-  currentIndex = 0;
-  answers = [];
-  description.value = "";
-  hide(questionScreen);
-  hide(resultScreen);
-  hide(categoryPicker);
-  hide(error);
-  show(startScreen);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js").catch(() => {}));
-}
+function red(message,action){return{risk:"RED",title:"Seek Immediate Medical Attention",message,action};}
+function yellow(message,action){return{risk:"YELLOW",title:"Medical Evaluation Recommended",message,action};}
+function green(message,action){return{risk:"GREEN",title:"No Immediate Emergency Signs Detected",message,action};}
+const categoryLabels={chest_pain:"Chest Pain",pregnancy:"Pregnancy",menstrual:"Menstrual Health",bleeding:"Bleeding",unconsciousness:"Unconsciousness"};
+let currentProtocol=null,currentIndex=0,answers=[];
+const $=id=>document.getElementById(id);
+const startScreen=$("startScreen"),questionScreen=$("questionScreen"),resultScreen=$("resultScreen"),description=$("description"),error=$("error"),categoryPicker=$("categoryPicker"),categoryButtons=$("categoryButtons");
+function show(el){el.classList.remove("hidden");}function hide(el){el.classList.add("hidden");}
+function classify(text){const t=text.toLowerCase();if(/unconscious|unresponsive|not responding|passed out|collapsed|not awake|fainted/.test(t))return"unconsciousness";if(/pregnan|pregnancy|pregnant/.test(t))return"pregnancy";if(/chest pain|pain in (my|the) chest|chest pressure/.test(t))return"chest_pain";if(/period|menstrual|menstruation|cramps/.test(t))return"menstrual";if(/bleed|bleeding|blood loss|heavy blood/.test(t))return"bleeding";return null;}
+function startProtocol(key){currentProtocol=PROTOCOLS[key];if(!currentProtocol)return;currentIndex=0;answers=[];hide(startScreen);hide(resultScreen);show(questionScreen);renderQuestion();window.scrollTo({top:0,behavior:"smooth"});}
+function renderQuestion(){const q=currentProtocol.questions[currentIndex];$("protocolName").textContent=currentProtocol.name;$("questionCounter").textContent=`Question ${currentIndex+1} of ${currentProtocol.questions.length}`;$("questionText").textContent=q;}
+function answer(value){answers[currentIndex]=value;currentIndex++;if(currentIndex<currentProtocol.questions.length){renderQuestion();}else{showResult(currentProtocol.evaluate(answers));}}
+function showResult(result){hide(questionScreen);show(resultScreen);const badge=$("riskBadge");badge.textContent=result.risk;badge.className=`risk-badge risk-${result.risk.toLowerCase()}`;$("resultTitle").textContent=result.title;$("resultMessage").textContent=result.message;$("resultBox").innerHTML=`<strong>What to do next</strong><div>${escapeHtml(result.action)}</div><p class="disclaimer">This is a demonstration decision-support interface, not a diagnosis or a substitute for professional medical care.</p>`;window.scrollTo({top:0,behavior:"smooth"});}
+function escapeHtml(value){return value.replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));}
+function showCategoryPicker(){categoryButtons.innerHTML="";Object.entries(categoryLabels).forEach(([key,label])=>{const button=document.createElement("button");button.type="button";button.className="category-btn";button.textContent=label;button.addEventListener("click",()=>startProtocol(key));categoryButtons.appendChild(button);});show(categoryPicker);error.textContent="";hide(error);}
+$("startButton").addEventListener("click",()=>{const text=description.value.trim();if(!text){error.textContent="Please describe the main problem first.";show(error);return;}const category=classify(text);if(category){hide(categoryPicker);hide(error);startProtocol(category);}else showCategoryPicker();});
+const answerGrid=document.querySelector(".answer-grid");
+answerGrid.addEventListener("click",event=>{const button=event.target.closest(".answer");if(!button||!currentProtocol)return;answer(button.dataset.answer);});
+$("restartButton").addEventListener("click",()=>{currentProtocol=null;currentIndex=0;answers=[];description.value="";hide(questionScreen);hide(resultScreen);hide(categoryPicker);hide(error);show(startScreen);window.scrollTo({top:0,behavior:"smooth"});});
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(err=>console.warn("SW registration failed",err)));}
